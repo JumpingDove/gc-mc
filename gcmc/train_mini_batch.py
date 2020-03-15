@@ -281,7 +281,8 @@ for epoch in range(NB_EPOCH):
         while True:
             t = time.time()
 
-            train_u_indices_batch, train_v_indices_batch, train_labels_batch = data_iter.next()
+            # AttributeError: 'generator' object has no attribute 'next'
+            train_u_indices_batch, train_v_indices_batch, train_labels_batch = next(data_iter)
 
             # Collect all user and item nodes for train set
             train_u = list(set(train_u_indices_batch))

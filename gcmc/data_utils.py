@@ -15,7 +15,7 @@ from urllib.request import urlopen
 from zipfile import ZipFile
 # StringIO is not supported by Python 3.x. replace it with io.
 # from StringIO import StringIO
-from io import StringIO
+from io import StringIO, BytesIO
 import shutil
 import os.path
 
@@ -57,7 +57,8 @@ def map_data(data):
     uniq = list(set(data))
 
     id_dict = {old: new for new, old in enumerate(sorted(uniq))}
-    data = np.array(map(lambda x: id_dict[x], data))
+    # Since map does not returns list type object but map object, must cast return value as a list.
+    data = np.array(list(map(lambda x: id_dict[x], data)))
     n = len(uniq)
 
     return data, id_dict, n
@@ -78,7 +79,9 @@ def download_dataset(dataset, files, data_dir):
         else:
             raise ValueError('Invalid dataset option %s' % dataset)
 
-        with ZipFile(StringIO(request.read())) as zip_ref:
+        # TypeError: initial_value must be str or None, not bytes
+        # Since zip file is not Text-format data, must use BytesIO for zip file instead of StringIO
+        with ZipFile(BytesIO(request.read())) as zip_ref:
             zip_ref.extractall('data/')
 
         source = [target_dir + '/' + s for s in os.listdir(target_dir)]
@@ -329,7 +332,8 @@ def load_data(fname, seed=1234, verbose=True):
 
         # shuffle here like cf-nade paper with python's own random class
         # make sure to convert to list, otherwise random.shuffle acts weird on it without a warning
-        data_array = data.as_matrix().tolist()
+        # FutureWarning: Method .as_matrix will be removed in a future version. Use .values instead.
+        data_array = data.values().tolist()
         random.seed(seed)
         random.shuffle(data_array)
         data_array = np.array(data_array)

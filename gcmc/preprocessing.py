@@ -6,6 +6,7 @@ import scipy.sparse as sp
 # cPickle is not supported by Python 3.x, replace it with _pickle.
 # import cPickle as pkl
 import _pickle as pkl
+import os
 import h5py
 import pandas as pd
 
@@ -124,10 +125,9 @@ def create_trainvaltest_split(dataset, seed=1234, testing=False, datasplit_path=
     For each split computes 1-of-num_classes labels. Also computes training
     adjacency matrix.
     """
-
     if datasplit_from_file and os.path.isfile(datasplit_path):
         print('Reading dataset splits from file...')
-        with open(datasplit_path) as f:
+        with open(datasplit_path, 'rb') as f:
             num_users, num_items, u_nodes, v_nodes, ratings, u_features, v_features = pkl.load(f)
 
         if verbose:
@@ -140,7 +140,7 @@ def create_trainvaltest_split(dataset, seed=1234, testing=False, datasplit_path=
         num_users, num_items, u_nodes, v_nodes, ratings, u_features, v_features = load_data(dataset, seed=seed,
                                                                                             verbose=verbose)
 
-        with open(datasplit_path, 'w') as f:
+        with open(datasplit_path, 'wb') as f:
             pkl.dump([num_users, num_items, u_nodes, v_nodes, ratings, u_features, v_features], f)
 
     neutral_rating = -1
@@ -411,7 +411,8 @@ def load_official_trainvaltest_split(dataset, testing=False):
     pairs_nonzero_test = pairs_nonzero[num_train+num_val:]
 
     # Internally shuffle training set (before splitting off validation set)
-    rand_idx = range(len(idx_nonzero_train))
+    # TypeError: 'range' object does not support item assignment
+    rand_idx = list(range(len(idx_nonzero_train)))
     np.random.seed(42)
     np.random.shuffle(rand_idx)
     idx_nonzero_train = idx_nonzero_train[rand_idx]

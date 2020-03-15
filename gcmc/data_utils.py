@@ -9,9 +9,13 @@ import scipy.sparse as sp
 import random
 
 # For automatic dataset downloading
-from urllib2 import urlopen
+# urllib2 is not supported by Python 3.x. replace it with urllib.request.
+# from urllib2 import urlopen
+from urllib.request import urlopen
 from zipfile import ZipFile
-from StringIO import StringIO
+# StringIO is not supported by Python 3.x. replace it with io.
+# from StringIO import StringIO
+from io import StringIO
 import shutil
 import os.path
 

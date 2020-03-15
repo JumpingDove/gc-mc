@@ -10,7 +10,7 @@ setup(name='gcmc',
       download_url='https://github.com/riannevdberg/gc-mc',
       license='MIT',
       install_requires=['numpy',
-                        'tensorflow',
+                        'tensorflow==1.4.0',
                         'scipy',
                         'pandas',
                         'h5py'

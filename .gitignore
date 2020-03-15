@@ -29,3 +29,8 @@ gcmc/tmp/*
 
 !gcmc/logs/README.md
 !gcmc/tmp/README.md
+
+# Don't keep track gcmc installation folders
+build/*
+dist/*
+gcmc.egg-info/*
